@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->integer('tg_user_id')->unique();
+            $table->string('tg_username')->unique();
         });
     }
 
@@ -26,6 +27,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('tg_username');
             $table->dropColumn('tg_user_id');
         });
     }

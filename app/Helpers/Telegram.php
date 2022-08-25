@@ -8,16 +8,18 @@ class Telegram
 {
     private string $url_telegram;
     private string $token;
+    private Http $http;
 
-    public function __construct()
+    public function __construct(Http $http)
     {
         $this->url_telegram = 'https://api.telegram.org/bot';
-        $this->token = config('telegram.token');
+        $this->token = config('telegram.bot.token');
+        $this->http = $http;
     }
 
     public function sendMessage($chat_id, $message)
     {
-        Http::post($this->url_telegram . $this->token . '/sendMessage',
+        return $this->http::post($this->url_telegram . $this->token . '/sendMessage',
             [
                 'chat_id' => $chat_id,
                 'text' => $message,
