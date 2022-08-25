@@ -8,7 +8,7 @@ use App\Helpers\Telegram;
 
 class SendMessageController extends Controller
 {
-    protected $telegram;
+    protected Telegram $telegram;
 
     public function __construct()
     {
