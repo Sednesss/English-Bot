@@ -7,5 +7,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('setWebhook', 'App\Http\Controllers\Telegram\SetWebhookController@setWebhook')->name('setWebhook');
+
 Route::get('sendMessage', 'App\Http\Controllers\Telegram\SendMessageController@sendMessage')->name('sendMessage');
 
