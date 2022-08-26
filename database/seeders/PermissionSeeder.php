@@ -15,12 +15,28 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        $administration = Permission::create(['name' => 'administration']);
+        //admin
+        Permission::create(['name' => 'CRUD user']);
+        Permission::create(['name' => 'CRUD group']);
+        Permission::create(['name' => 'edit storage']);
+        Permission::create(['name' => 'edit notification frequency']);
 
-        $teach = Permission::create(['name' => 'teach']);
-        $assistance = Permission::create(['name' => 'change the format of education']);
-        $base_tools = Permission::create(['name' => 'get basic information']);
+        //assistant and teacher
+        Permission::create(['name' => 'edit timetable']);
+        Permission::create(['name' => 'edit tutorial']);
 
-        $education = Permission::create(['name' => 'education']);
+        //teacher
+        Permission::create(['name' => 'send homework']);
+        Permission::create(['name' => 'send material']);
+
+        //teacher and student
+        Permission::create(['name' => 'get group information']);
+        Permission::create(['name' => 'on/off notifications']);
+
+        //student
+        Permission::create(['name' => 'get timetable']);
+        Permission::create(['name' => 'get homework']);
+        Permission::create(['name' => 'get material']);
+        Permission::create(['name' => 'get tutorial']);
     }
 }
