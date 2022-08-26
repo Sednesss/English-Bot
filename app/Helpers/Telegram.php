@@ -18,12 +18,14 @@ class Telegram
     }
 
     //Установка веб перехватчика для бота
-    public function setWebhook(): \Illuminate\Http\Client\Response
+    public function setWebhook($url): \Illuminate\Http\Client\Response
     {
         return $this->http::get($this->url_telegram . $this->token . '/setWebhook',
             [
-                'url' => '97ed-84-22-145-180.jp.ngrok.io/api/webhook'
+                'url' => $url,
             ]);
+
+//        return $this->http::get($this->url_telegram . $this->token . '/getWebhookInfo');
     }
 
     //Отправка текстовых сообщений по telegram_id
@@ -33,6 +35,7 @@ class Telegram
             [
                 'chat_id' => $chat_id,
                 'text' => $message,
+                //'text' => route('telegram.sendMessage'),
                 'parse_mode' => 'html'
             ]);
     }

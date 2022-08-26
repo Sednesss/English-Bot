@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Telegram;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Telegram\SetWebHookRequest;
 
 class SetWebhookController extends BaseController
 {
@@ -11,9 +11,13 @@ class SetWebhookController extends BaseController
         parent::__construct();
     }
 
-    public function setWebhook(Request $request)
+    public function setWebhook(SetWebHookRequest $request)
     {
-        $result = $this->telegram->setWebhook();
-        dd(json_decode($result->body()));
+        $validated = $request->validated();
+
+        $url = $validated['url'];
+        $result = $this->telegram->setWebhook($url);
+
+        dd(json_decode($result->body()), $url);
     }
 }

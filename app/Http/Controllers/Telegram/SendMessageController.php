@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Telegram;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Telegram\SendMessageRequest;
 
 class SendMessageController extends BaseController
 {
@@ -11,9 +11,14 @@ class SendMessageController extends BaseController
         parent::__construct();
     }
 
-    public function sendMessage(Request $request)
+    public function sendMessage(SendMessageRequest $request)
     {
-        $result = $this->telegram->sendMessage(542017586, 'hello');
+        $validated = $request->validated();
+
+        $chat_id = $validated['chat_id'];
+        $text = $validated['text'];
+
+        $result = $this->telegram->sendMessage($chat_id, $text);
         dd(json_decode($result->body()));
     }
 }
