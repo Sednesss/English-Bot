@@ -8,10 +8,18 @@ use Illuminate\Support\Facades\Http;
 
 class MessageAssistant implements RoleMessageInterface
 {
-    function getMessage($chat_id, $message)
+    public function defineMessage($chat_id, $message){
+        return [
+            'message' => $this->getMessage(),
+            'keyboard' => $this->getKeyboard(),
+        ];
+    }
+
+    function getMessage()
     {
-        $telegram = New Telegram(New Http());
-        $result = $telegram->sendMessage($chat_id, 'You assistant' . $message);
+    }
+    function getKeyboard()
+    {
     }
 }
 

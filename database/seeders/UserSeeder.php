@@ -34,9 +34,19 @@ class UserSeeder extends Seeder
             ]
         );
 
+        $user_3 = User::create(
+            [
+                'name' => 'test',
+                'email' => '@testtest',
+                'password' => '1234',
+                'tg_username' => 'gwerty',
+            ]
+        );
+
         $all_permission = Role::all();
         $user_1->assignRole('administrator');
         $user_2->assignRole('administrator');
+        $user_3->assignRole('administrator');
 
     }
 }

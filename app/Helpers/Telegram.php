@@ -27,13 +27,14 @@ class Telegram
     }
 
     //Отправка текстовых сообщений по telegram_id
-    public function sendMessage($chat_id, $message): \Illuminate\Http\Client\Response
+    public function sendMessage($chat_id, $message, $buttons): \Illuminate\Http\Client\Response
     {
         return $this->http::post($this->url_telegram . $this->token . '/sendMessage',
             [
                 'chat_id' => $chat_id,
                 'text' => $message,
-                'parse_mode' => 'html'
+                'parse_mode' => 'html',
+                'reply_markup' => $buttons,
             ]);
     }
 }
