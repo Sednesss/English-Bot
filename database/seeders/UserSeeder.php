@@ -35,8 +35,8 @@ class UserSeeder extends Seeder
         );
 
         $all_permission = Role::all();
-        $user_1->assignRole('admin');
-        $user_2->assignRole('admin');
+        $user_1->assignRole('administrator');
+        $user_2->assignRole('administrator');
 
     }
 }

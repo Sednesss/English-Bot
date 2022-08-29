@@ -24,8 +24,6 @@ class Telegram
             [
                 'url' => $url,
             ]);
-
-//        return $this->http::get($this->url_telegram . $this->token . '/getWebhookInfo');
     }
 
     //Отправка текстовых сообщений по telegram_id
@@ -35,7 +33,6 @@ class Telegram
             [
                 'chat_id' => $chat_id,
                 'text' => $message,
-                //'text' => route('telegram.sendMessage'),
                 'parse_mode' => 'html'
             ]);
     }

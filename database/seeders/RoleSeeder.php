@@ -16,42 +16,33 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $admin = Role::create(['name' => 'administrator']);
+        $administrator = Role::create(['name' => 'administrator']);
         $teacher = Role::create(['name' => 'teacher']);
         $assistant = Role::create(['name' => 'assistant']);
         $student = Role::create(['name' => 'student']);
 
-        //admin
-        Permission::create(['name' => 'CRUD user']);
-        Permission::create(['name' => 'CRUD group']);
-        Permission::create(['name' => 'edit storage']);
-        Permission::create(['name' => 'edit notification frequency']);
-        //assistant and teacher
-        Permission::create(['name' => 'edit timetable']);
-        Permission::create(['name' => 'edit tutorial']);
-        //teacher
-        Permission::create(['name' => 'send homework']);
-        Permission::create(['name' => 'send material']);
-        //teacher and student
-        Permission::create(['name' => 'get group information']);
-        Permission::create(['name' => 'on/off notifications']);
-        //student
-        Permission::create(['name' => 'get timetable']);
-        Permission::create(['name' => 'get homework']);
-        Permission::create(['name' => 'get material']);
-        Permission::create(['name' => 'get tutorial']);
-
         $all_permission = Permission::all();
 
-        $administration = $all_permission->get('name', 'administration');
-        $teach = $all_permission->get('name', 'teach');
-        $assistance = $all_permission->get('name', 'change the format of education');
-        $base_tools = $all_permission->get('name', 'get basic information');
-        $education = $all_permission->get('name', 'education');
-//
-//        $admin->givePermissionTo($administration);
-//        $teacher->syncPermissions([$teach, $assistance, $base_tools]);
-//        $assistant->givePermissionTo($assistance);
-//        $student->syncPermissions([$base_tools, $education]);
+        $CRUD_user = $all_permission->get('name', 'CRUD user');
+        $CRUD_group = $all_permission->get('name', 'CRUD group');
+        $edit_storage = $all_permission->get('name', 'edit storage');
+        $edit_notification_frequency = $all_permission->get('name', 'edit notification frequency');
+        $edit_timetable = $all_permission->get('name', 'edit timetable');
+        $edit_tutorial = $all_permission->get('name', 'edit tutorial');
+        $send_homework = $all_permission->get('name', 'send homework');
+        $send_material = $all_permission->get('name', 'send material');
+        $get_group_information = $all_permission->get('name', 'get group information');
+        $on_off_notifications = $all_permission->get('name', 'on/off notifications');
+        $get_timetable = $all_permission->get('name', 'get timetable');
+        $get_homework = $all_permission->get('name', 'get homework');
+        $get_material = $all_permission->get('name', 'get material');
+        $get_tutorial = $all_permission->get('name', 'get tutorial');
+
+        $administrator->syncPermissions([$CRUD_user, $CRUD_group, $edit_storage, $edit_notification_frequency]);
+        $teacher->syncPermissions([$edit_timetable, $edit_tutorial, $send_homework, $send_material,
+            $get_group_information, $on_off_notifications]);
+        $assistant->syncPermissions([$edit_timetable, $edit_tutorial]);
+        $student->syncPermissions([$get_group_information, $on_off_notifications, $get_timetable, $get_homework,
+            $get_material, $get_tutorial]);
     }
 }
