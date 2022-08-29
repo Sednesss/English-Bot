@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Telegram;
 
+use App\Helpers\Telegram;
 use App\Http\Requests\Telegram\SetWebHookRequest;
 
 class SetWebhookController extends BaseController
 {
-    public function __construct()
+    public function __construct(Telegram $telegram)
     {
-        parent::__construct();
+        parent::__construct($telegram);
     }
 
     public function setWebhook(SetWebHookRequest $request)

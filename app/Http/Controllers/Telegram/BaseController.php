@@ -10,8 +10,9 @@ class BaseController extends Controller
 {
     protected Telegram $telegram;
 
-    public function __construct()
+    public function __construct(Telegram $telegram)
     {
-        $this->telegram = new Telegram(new Http());
+        $this->telegram = $telegram;
     }
+
 }
