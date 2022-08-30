@@ -3,22 +3,44 @@
 namespace App\Services;
 
 use App\Contracts\Telegram\RoleMessageInterface;
-use App\Helpers\Telegram;
-use Illuminate\Support\Facades\Http;
+use App\Models\User;
 
 class MessageStudent implements RoleMessageInterface
 {
-    public function defineMessage($chat_id, $message){
+    private int $tg_user_id;
+    private string $incoming_message;
+
+
+    public function __construct($tg_user_id, $incoming_message)
+    {
+        $this->tg_user_id = $tg_user_id;
+        $this->incoming_message = $incoming_message;
+    }
+
+    public function defineMessage()
+    {
         return [
-            'message' => $this->getMessage(),
+            'message' => $this->getMessage($this->tg_user_id),
             'keyboard' => $this->getKeyboard(),
         ];
     }
 
-    function getMessage()
+    function getMessage($chat_id)
     {
+        $user = User::where('tg_user_id', $chat_id)->first();
+
+        $context = [
+            'user' => $user,
+        ];
+        return (string)view('Telegram/responses/Student/StudentMessage', $context);
     }
+
     function getKeyboard()
     {
+        return [
+            'inline_keyboard' => [
+
+            ]
+        ];
     }
 }

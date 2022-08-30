@@ -17,7 +17,6 @@ class Telegram
         $this->http = $http;
     }
 
-    //Установка веб перехватчика для бота
     public function setWebhook($url): \Illuminate\Http\Client\Response
     {
         return $this->http::get($this->url_telegram . $this->token . '/setWebhook',
@@ -26,7 +25,6 @@ class Telegram
             ]);
     }
 
-    //Отправка текстовых сообщений по telegram_id
     public function sendMessage($chat_id, $message, $buttons): \Illuminate\Http\Client\Response
     {
         return $this->http::post($this->url_telegram . $this->token . '/sendMessage',

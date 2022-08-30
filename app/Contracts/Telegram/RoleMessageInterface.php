@@ -4,5 +4,7 @@ namespace App\Contracts\Telegram;
 
 interface RoleMessageInterface
 {
-    function defineMessage($chat_id, $message);
+    public function __construct(int $tg_user_id, string $incoming_message);
+
+    public function defineMessage();
 }

@@ -11,10 +11,12 @@ use App\Services\MessageAssistant;
 use App\Services\MessageDefault;
 use App\Services\MessageStudent;
 use App\Services\MessageTeacher;
-use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
+    private string $outgoing_message = '';
+    private array $outgoing_keyboard = [];
+
     public function index(WebhookRequest $request)
     {
         $validated = $request->validated();
@@ -22,43 +24,47 @@ class WebhookController extends Controller
         $sender_id = $validated['message']['from']['id'];
         $sender_username = $validated['message']['from']['username'];
         $incoming_message = $validated['message']['text'];
-        $outgoing_message = '';
 
+        $user_message_role_list = [];
         $user = User::where('tg_user_id', $sender_id)->first();
         if ($user) {
-            $user_message_role_list = [];
+
             foreach ($user->roles as $user_role) {
-                $user_message_role_list[] = $this->defineMessageToRole($user_role->name);
+                $user_message_role_list[] = $this->defineMessageToRole($user_role->name, $sender_id, $incoming_message);
             }
+
         } else {
             $user = User::where('tg_username', $sender_username)->first();
             if ($user) {
                 $user->tg_user_id = $sender_id;
                 $user->save();
 
-                $user_message_role_list = [];
                 foreach ($user->roles as $user_role) {
-                    $user_message_role_list[] = $this->defineMessageToRole($user_role->name);
+                    $user_message_role_list[] = $this->defineMessageToRole($user_role->name, $sender_id, $incoming_message);
                 }
+
             } else {
-                $user_message_role_list[] = new MessageDefault();
+                $user_message_role_list[] = new MessageDefault($sender_id, $incoming_message);
             }
         }
+
         foreach ($user_message_role_list as $message_user_role) {
-            $outgoing_message = $message_user_role->defineMessage($sender_id, $incoming_message);
-            echo 1;
+            $message_and_keyboard = $message_user_role->defineMessage();
+            $this->outgoing_message .= $message_and_keyboard['message'];
+            $this->outgoing_keyboard = $message_and_keyboard['keyboard'];
         }
-        app(Telegram::class)->sendMessage($sender_id, $outgoing_message['message'], $outgoing_message['keyboard']);
+        app(Telegram::class)->sendMessage($sender_id, $this->outgoing_message,
+            $this->outgoing_keyboard);
     }
 
-    private function defineMessageToRole($role_name): MessageAdministrator|MessageDefault|MessageTeacher|MessageAssistant|MessageStudent
+    private function defineMessageToRole($role_name, $sender_id, $incoming_message): MessageAdministrator|MessageDefault|MessageTeacher|MessageAssistant|MessageStudent
     {
         return match ($role_name) {
-            $role_name == 'administrator' => new MessageAdministrator(),
-            $role_name == 'teacher' => new MessageTeacher(),
-            $role_name == 'assistant' => new MessageAssistant(),
-            $role_name == 'student' => new MessageStudent(),
-            default => new MessageDefault(),
+            'administrator' => new MessageAdministrator($sender_id, $incoming_message),
+            'teacher' => new MessageTeacher($sender_id, $incoming_message),
+            'assistant' => new MessageAssistant($sender_id, $incoming_message),
+            'student' => new MessageStudent($sender_id, $incoming_message),
+            default => new MessageDefault($sender_id, $incoming_message),
         };
     }
 }

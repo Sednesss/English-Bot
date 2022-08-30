@@ -7,7 +7,16 @@ use App\Models\User;
 
 class MessageDefault implements RoleMessageInterface
 {
-    public function defineMessage($chat_id, $message){
+    private int $tg_user_id;
+    private string $incoming_message;
+
+    public function __construct($tg_user_id, $incoming_message)
+    {
+        $this->tg_user_id = $tg_user_id;
+        $this->incoming_message = $incoming_message;
+    }
+
+    public function defineMessage(){
         return [
             'message' => $this->getMessage(),
             'keyboard' => $this->getKeyboard(),
@@ -15,13 +24,17 @@ class MessageDefault implements RoleMessageInterface
     }
     private function getMessage()
     {
-        $administrators = $users = User::role('administrator')->get();
-        return view('Telegram/responses/DefaultMessage');
+        $administrators = $users = User::role('administrator')->pluck('tg_username');
+
+        $context = [
+            'administrators' => $administrators,
+        ];
+        return (string)view('Telegram/responses/Default/DefaultMessage', $context);
     }
 
     private function getKeyboard()
     {
-        $buttons = [
+        return [
             'inline_keyboard' => [
                 [
                     [
@@ -41,6 +54,5 @@ class MessageDefault implements RoleMessageInterface
                 ]
             ]
         ];
-        return $buttons;
     }
 }
