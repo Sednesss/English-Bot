@@ -38,23 +38,15 @@ class MessageAssistant implements RoleMessageInterface
     function getKeyboard()
     {
         return [
-            'inline_keyboard' => [
+            'keyboard' => [
                 [
                     [
-                        'text' => 'test 1',
-                        'callback_data' => '1'
+                        'text' => 'Редактировать рассписание',
                     ],
                     [
-                        'text' => 'test 2',
-                        'callback_data' => '2'
+                        'text' => 'Редактировать учебное пособие',
                     ],
                 ],
-                [
-                    [
-                        'text' => 'test 3',
-                        'callback_data' => '3'
-                    ],
-                ]
             ]
         ];
     }

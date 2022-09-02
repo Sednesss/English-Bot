@@ -16,6 +16,7 @@ class WebhookController extends Controller
 {
     private string $outgoing_message = '';
     private array $outgoing_keyboard = [];
+    private array $user_role_handler_list = [];
 
     public function index(WebhookRequest $request)
     {
@@ -25,12 +26,24 @@ class WebhookController extends Controller
         $sender_username = $validated['message']['from']['username'];
         $incoming_message = $validated['message']['text'];
 
-        $user_message_role_list = [];
+        $this->defineUserRoles($sender_id, $sender_username, $incoming_message);
+
+        foreach ($this->user_role_handler_list as $user_role_handler) {
+            $message_and_keyboard = $user_role_handler->defineMessage();
+            $this->outgoing_message .= $message_and_keyboard['message'];
+            $this->editButtons($message_and_keyboard['keyboard']);
+        }
+        app(Telegram::class)->sendMessage($sender_id, $this->outgoing_message,
+            $this->outgoing_keyboard);
+    }
+
+    private function defineUserRoles($sender_id, $sender_username, $incoming_message)
+    {
         $user = User::where('tg_user_id', $sender_id)->first();
         if ($user) {
 
             foreach ($user->roles as $user_role) {
-                $user_message_role_list[] = $this->defineMessageToRole($user_role->name, $sender_id, $incoming_message);
+                $this->user_role_handler_list[] = $this->getRoleHandler($user_role->name, $sender_id, $incoming_message);
             }
 
         } else {
@@ -40,24 +53,16 @@ class WebhookController extends Controller
                 $user->save();
 
                 foreach ($user->roles as $user_role) {
-                    $user_message_role_list[] = $this->defineMessageToRole($user_role->name, $sender_id, $incoming_message);
+                    $this->user_role_handler_list[] = $this->getRoleHandler($user_role->name, $sender_id, $incoming_message);
                 }
 
             } else {
-                $user_message_role_list[] = new MessageDefault($sender_id, $incoming_message);
+                $this->user_role_handler_list[] = new MessageDefault($sender_id, $incoming_message);
             }
         }
-
-        foreach ($user_message_role_list as $message_user_role) {
-            $message_and_keyboard = $message_user_role->defineMessage();
-            $this->outgoing_message .= $message_and_keyboard['message'];
-            $this->outgoing_keyboard = $message_and_keyboard['keyboard'];
-        }
-        app(Telegram::class)->sendMessage($sender_id, $this->outgoing_message,
-            $this->outgoing_keyboard);
     }
 
-    private function defineMessageToRole($role_name, $sender_id, $incoming_message): MessageAdministrator|MessageDefault|MessageTeacher|MessageAssistant|MessageStudent
+    private function getRoleHandler($role_name, $sender_id, $incoming_message): MessageAdministrator|MessageDefault|MessageTeacher|MessageAssistant|MessageStudent
     {
         return match ($role_name) {
             'administrator' => new MessageAdministrator($sender_id, $incoming_message),
@@ -66,5 +71,12 @@ class WebhookController extends Controller
             'student' => new MessageStudent($sender_id, $incoming_message),
             default => new MessageDefault($sender_id, $incoming_message),
         };
+    }
+
+    private function editButtons($new_buttons)
+    {
+        foreach ($new_buttons['keyboard']as $button_line){
+            $this->outgoing_keyboard['keyboard'][] = $button_line;
+        }
     }
 }

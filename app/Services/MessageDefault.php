@@ -16,15 +16,17 @@ class MessageDefault implements RoleMessageInterface
         $this->incoming_message = $incoming_message;
     }
 
-    public function defineMessage(){
+    public function defineMessage()
+    {
         return [
             'message' => $this->getMessage(),
             'keyboard' => $this->getKeyboard(),
         ];
     }
+
     private function getMessage()
     {
-        $administrators = $users = User::role('administrator')->pluck('tg_username');
+        $administrators = User::role('administrator')->pluck('tg_username');
 
         $context = [
             'administrators' => $administrators,
@@ -35,24 +37,31 @@ class MessageDefault implements RoleMessageInterface
     private function getKeyboard()
     {
         return [
-            'inline_keyboard' => [
+            'keyboard' => [
                 [
                     [
-                        'text' => 'test 1',
-                        'callback_data' => '1'
-                    ],
-                    [
-                        'text' => 'test 2',
-                        'callback_data' => '2'
+                        'text' => '1111111',
                     ],
                 ],
-                [
-                    [
-                        'text' => 'test 3',
-                        'callback_data' => '3'
-                    ],
-                ]
             ]
+//            'inline_keyboard' => [
+//                [
+//                    [
+//                        'text' => 'test 1',
+//                        'callback_data' => '1'
+//                    ],
+//                    [
+//                        'text' => 'test 2',
+//                        'callback_data' => '2'
+//                    ],
+//                ],
+//                [
+//                    [
+//                        'text' => 'test 3',
+//                        'callback_data' => '3'
+//                    ],
+//                ]
+//            ]
         ];
     }
 }

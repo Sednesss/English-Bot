@@ -38,8 +38,30 @@ class MessageStudent implements RoleMessageInterface
     function getKeyboard()
     {
         return [
-            'inline_keyboard' => [
-
+            'keyboard' => [
+                [
+                    [
+                        'text' => 'Рассписание',
+                    ],
+                ],
+                [
+                    [
+                        'text' => 'Домашнее задание',
+                    ],
+                    [
+                        'text' => 'Сопровождающий материал',
+                    ],
+                ],
+                [
+                    [
+                        'text' => 'Учебное пособие',
+                    ],
+                ],
+                [
+                    [
+                        'text' => 'Включить уведомления',
+                    ],
+                ],
             ]
         ];
     }

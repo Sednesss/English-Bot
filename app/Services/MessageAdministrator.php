@@ -38,23 +38,12 @@ class MessageAdministrator implements RoleMessageInterface
     private function getKeyboard()
     {
         return [
-            'inline_keyboard' => [
+            'keyboard' => [
                 [
                     [
-                        'text' => 'test 1',
-                        'callback_data' => '1'
-                    ],
-                    [
-                        'text' => 'test 2',
-                        'callback_data' => '2'
+                        'text' => 'Оповестить всех',
                     ],
                 ],
-                [
-                    [
-                        'text' => 'test 3',
-                        'callback_data' => '3'
-                    ],
-                ]
             ]
         ];
     }
