@@ -27,12 +27,24 @@ class MessageAdministrator implements RoleMessageInterface
 
     private function getMessage()
     {
-        $user = User::where('tg_user_id', $this->tg_user_id)->first();
+        $view_template = 'Telegram/responses/Administrator/';
+        $context = [];
 
-        $context = [
-            'user' => $user,
-        ];
-        return (string)view('Telegram/responses/Administrator/AdministratorMessage', $context);
+        switch ($this->incoming_message) {
+            case 'Оповестить всех':
+                $view_template .= 'PushNotifyEveryoneMessage';
+                break;
+            default:
+                $view_template .= 'DefaultMessage';
+
+                $user = User::where('tg_user_id', $this->tg_user_id)->first();
+                $context = [
+                    'user' => $user,
+                ];
+                break;
+        }
+        return (string)view($view_template, $context);
+
     }
 
     private function getKeyboard()

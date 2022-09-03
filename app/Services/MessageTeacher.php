@@ -27,12 +27,23 @@ class MessageTeacher implements RoleMessageInterface
 
     function getMessage()
     {
-        $user = User::where('tg_user_id', $this->tg_user_id)->first();
+        $view_template = 'Telegram/responses/Teacher/';
+        $context = [];
 
-        $context = [
-            'user' => $user,
-        ];
-        return (string)view('Telegram/responses/Teacher/TeacherMessage', $context);
+        switch ($this->incoming_message) {
+            case 'Редактировать расписание':
+                $view_template .= 'PushEditTimetableMessage';
+                break;
+            default:
+                $view_template .= 'DefaultMessage';
+
+                $user = User::where('tg_user_id', $this->tg_user_id)->first();
+                $context = [
+                    'user' => $user,
+                ];
+                break;
+        }
+        return (string)view($view_template, $context);
     }
 
     function getKeyboard()
@@ -41,7 +52,7 @@ class MessageTeacher implements RoleMessageInterface
             'keyboard' => [
                 [
                     [
-                        'text' => 'Редактировать рассписание',
+                        'text' => 'Редактировать расписание',
                     ],
                     [
                         'text' => 'Редактировать учебное пособие',
