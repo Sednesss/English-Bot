@@ -4,21 +4,24 @@ namespace App\Services;
 
 use App\Contracts\Telegram\RoleMessageInterface;
 use App\Helpers\MessagesTemplates;
-use App\Models\User;
 
 class MessageAdministrator implements RoleMessageInterface
 {
     private string $incoming_message;
     private MessagesTemplates $messages_templates;
+    private array $buttons = [
+        'Информация об аккаунте',
+        'Оповестить всех',
+    ];
 
 
-    public function __construct($user, $incoming_message)
+    public function __construct($messages_templates, $incoming_message)
     {
         $this->incoming_message = $incoming_message;
-        $this->messages_templates = new MessagesTemplates($user, $incoming_message);
+        $this->messages_templates = $messages_templates;
     }
 
-    public function defineMessage()
+    public function defineMessage(): array
     {
         return [
             'message' => $this->getMessage(),
@@ -28,19 +31,25 @@ class MessageAdministrator implements RoleMessageInterface
 
     private function getMessage(): string
     {
-        return match ($this->incoming_message) {
-            'Оповестить всех' => $this->messages_templates->GetResponseMessage('Оповестить всех'),
-            default => $this->messages_templates->GetResponseMessage('default'),
-        };
+        if (in_array($this->incoming_message, $this->buttons)) {
+            return $this->messages_templates->GetResponseMessage($this->incoming_message);
+        } else {
+            return '';
+        }
     }
 
-    private function getKeyboard()
+    private function getKeyboard(): array
     {
         return [
             'keyboard' => [
                 [
                     [
-                        'text' => 'Оповестить всех',
+                        'text' => $this->buttons[0],
+                    ],
+                ],
+                [
+                    [
+                        'text' => $this->buttons[1],
                     ],
                 ],
             ]

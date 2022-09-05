@@ -3,21 +3,28 @@
 namespace App\Services;
 
 use App\Contracts\Telegram\RoleMessageInterface;
-use App\Models\User;
+use App\Helpers\MessagesTemplates;
 
 class MessageAssistant implements RoleMessageInterface
 {
-    private int $tg_user_id;
     private string $incoming_message;
+    private MessagesTemplates $messages_templates;
+    private array $buttons = [
+        'Информация об аккаунте',
+        'Информация о группе',
+        'Редактировать расписание',
+        'Редактировать учебное пособие',
+        'Включить уведомления'
+    ];
 
 
-    public function __construct($tg_user_id, $incoming_message)
+    public function __construct($messages_templates, $incoming_message)
     {
-        $this->tg_user_id = $tg_user_id;
         $this->incoming_message = $incoming_message;
+        $this->messages_templates = $messages_templates;
     }
 
-    public function defineMessage()
+    public function defineMessage(): array
     {
         return [
             'message' => $this->getMessage(),
@@ -25,48 +32,40 @@ class MessageAssistant implements RoleMessageInterface
         ];
     }
 
-    function getMessage()
+    function getMessage(): string
     {
-        $view_template = 'Telegram/responses/Assistant/';
-        $context = [];
-
-        switch ($this->incoming_message) {
-            case 'Редактировать расписание':
-                $view_template .= 'PushEditTimetableMessage';
-                break;
-            case 'Редактировать учебное пособие':
-                $view_template .= 'PushEditTutorialMessage';
-                break;
-            case 'Включить уведомления':
-                $view_template .= 'PushOnOffNotificationsMessage';
-                break;
-            default:
-                $view_template .= 'DefaultMessage';
-
-                $user = User::where('tg_user_id', $this->tg_user_id)->first();
-                $context = [
-                    'user' => $user,
-                ];
-                break;
+        if (in_array($this->incoming_message, $this->buttons)) {
+            return $this->messages_templates->GetResponseMessage($this->incoming_message);
+        } else {
+            return '';
         }
-        return (string)view($view_template, $context);
     }
 
-    function getKeyboard()
+    function getKeyboard(): array
     {
         return [
             'keyboard' => [
                 [
                     [
-                        'text' => 'Редактировать расписание',
-                    ],
-                    [
-                        'text' => 'Редактировать учебное пособие',
+                        'text' => $this->buttons[0],
                     ],
                 ],
                 [
                     [
-                        'text' => 'Включить уведомления',
+                        'text' => $this->buttons[1],
+                    ],
+                ],
+                [
+                    [
+                        'text' => $this->buttons[2],
+                    ],
+                    [
+                        'text' => $this->buttons[3],
+                    ],
+                ],
+                [
+                    [
+                        'text' => $this->buttons[4],
                     ],
                 ],
             ]

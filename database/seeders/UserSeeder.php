@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -47,6 +46,7 @@ class UserSeeder extends Seeder
         $user_1->assignRole('teacher');
         $user_1->assignRole('assistant');
         $user_1->assignRole('student');
+
         $user_2->assignRole('administrator');
         $user_3->assignRole('administrator');
 
