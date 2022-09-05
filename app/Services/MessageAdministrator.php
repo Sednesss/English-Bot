@@ -3,18 +3,19 @@
 namespace App\Services;
 
 use App\Contracts\Telegram\RoleMessageInterface;
+use App\Helpers\MessagesTemplates;
 use App\Models\User;
 
 class MessageAdministrator implements RoleMessageInterface
 {
-    private int $tg_user_id;
     private string $incoming_message;
+    private MessagesTemplates $messages_templates;
 
 
-    public function __construct($tg_user_id, $incoming_message)
+    public function __construct($user, $incoming_message)
     {
-        $this->tg_user_id = $tg_user_id;
         $this->incoming_message = $incoming_message;
+        $this->messages_templates = new MessagesTemplates($user, $incoming_message);
     }
 
     public function defineMessage()
@@ -25,26 +26,12 @@ class MessageAdministrator implements RoleMessageInterface
         ];
     }
 
-    private function getMessage()
+    private function getMessage(): string
     {
-        $view_template = 'Telegram/responses/Administrator/';
-        $context = [];
-
-        switch ($this->incoming_message) {
-            case 'Оповестить всех':
-                $view_template .= 'PushNotifyEveryoneMessage';
-                break;
-            default:
-                $view_template .= 'DefaultMessage';
-
-                $user = User::where('tg_user_id', $this->tg_user_id)->first();
-                $context = [
-                    'user' => $user,
-                ];
-                break;
-        }
-        return (string)view($view_template, $context);
-
+        return match ($this->incoming_message) {
+            'Оповестить всех' => $this->messages_templates->GetResponseMessage('Оповестить всех'),
+            default => $this->messages_templates->GetResponseMessage('default'),
+        };
     }
 
     private function getKeyboard()

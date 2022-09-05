@@ -34,6 +34,18 @@ class MessageTeacher implements RoleMessageInterface
             case 'Редактировать расписание':
                 $view_template .= 'PushEditTimetableMessage';
                 break;
+            case 'Редактировать учебное пособие':
+                $view_template .= 'PushEditTutorialMessage';
+                break;
+            case 'Отправить домашнее задание':
+                $view_template .= 'PushSendHomeworkMessage';
+                break;
+            case 'Отправить сопровождающий материал':
+                $view_template .= 'PushSendMaterialMessage';
+                break;
+            case 'Включить уведомления':
+                $view_template .= 'PushOnOffNotificationsMessage';
+                break;
             default:
                 $view_template .= 'DefaultMessage';
 

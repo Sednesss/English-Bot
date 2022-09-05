@@ -15,7 +15,7 @@ use App\Services\MessageTeacher;
 class WebhookController extends Controller
 {
     private string $outgoing_message = '';
-    private array $outgoing_keyboard = [];
+    private array $outgoing_keyboard = ['keyboard' => []];
     private array $user_role_handler_list = [];
 
     public function index(WebhookRequest $request)
@@ -42,8 +42,13 @@ class WebhookController extends Controller
         $user = User::where('tg_user_id', $sender_id)->first();
         if ($user) {
 
-            foreach ($user->roles as $user_role) {
-                $this->user_role_handler_list[] = $this->getRoleHandler($user_role->name, $sender_id, $incoming_message);
+            $user_roles = $user->roles;
+            if ($user_roles) {
+                foreach ($user_roles as $user_role) {
+                    $this->user_role_handler_list[] = $this->getRoleHandler($user_role->name, $user, $incoming_message);
+                }
+            } else {
+                $this->user_role_handler_list[] = new MessageDefault();
             }
 
         } else {
@@ -52,31 +57,41 @@ class WebhookController extends Controller
                 $user->tg_user_id = $sender_id;
                 $user->save();
 
-                foreach ($user->roles as $user_role) {
-                    $this->user_role_handler_list[] = $this->getRoleHandler($user_role->name, $sender_id, $incoming_message);
+                $user_roles = $user->roles;
+                if ($user_roles) {
+                    foreach ($user_roles as $user_role) {
+                        $this->user_role_handler_list[] = $this->getRoleHandler($user_role->name, $user, $incoming_message);
+                    }
+                } else {
+                    $this->user_role_handler_list[] = new MessageDefault();
                 }
 
             } else {
-                $this->user_role_handler_list[] = new MessageDefault($sender_id, $incoming_message);
+                $this->user_role_handler_list[] = new MessageDefault();
             }
         }
     }
 
-    private function getRoleHandler($role_name, $sender_id, $incoming_message): MessageAdministrator|MessageDefault|MessageTeacher|MessageAssistant|MessageStudent
+    private function getRoleHandler($role_name, $user, $incoming_message): MessageAdministrator|MessageDefault|MessageTeacher|MessageAssistant|MessageStudent
     {
         return match ($role_name) {
-            'administrator' => new MessageAdministrator($sender_id, $incoming_message),
-            'teacher' => new MessageTeacher($sender_id, $incoming_message),
-            'assistant' => new MessageAssistant($sender_id, $incoming_message),
-            'student' => new MessageStudent($sender_id, $incoming_message),
-            default => new MessageDefault($sender_id, $incoming_message),
+            'administrator' => new MessageAdministrator($user, $incoming_message),
+            'teacher' => new MessageTeacher($user, $incoming_message),
+            'assistant' => new MessageAssistant($user, $incoming_message),
+            'student' => new MessageStudent($user, $incoming_message),
+            default => new MessageDefault(),
         };
     }
 
     private function editButtons($new_buttons)
     {
-        foreach ($new_buttons['keyboard']as $button_line){
-            $this->outgoing_keyboard['keyboard'][] = $button_line;
+        if (array_key_exists('keyboard', $new_buttons)) {
+            foreach ($new_buttons['keyboard'] as $button_line) {
+                if (!in_array($button_line, $this->outgoing_keyboard['keyboard'])) {
+                    $this->outgoing_keyboard['keyboard'][] = $button_line;
+                }
+            }
         }
     }
+
 }
