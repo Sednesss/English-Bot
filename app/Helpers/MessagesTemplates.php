@@ -9,14 +9,14 @@ class MessagesTemplates
     private string $view_template_path = 'Telegram/responses/';
     private string $view_template_filename;
     private array $context = [];
-    private User $user;
+    private mixed $user;
 
     public function __construct($user)
     {
         $this->user = $user;
     }
 
-    public function GetResponseMessage($pressed_button): string
+    public function GetResponseMessage($pressed_button = ''): string
     {
         switch ($pressed_button) {
             case 'Информация об аккаунте':
@@ -55,11 +55,11 @@ class MessagesTemplates
             case 'Учебное пособие':
                 $this->GetTutorial();
                 break;
-            case 'Пользователь не найден':
-                $this->UserNotFound();
+            case '/default_message':
+                $this->DefaultMessage();
                 break;
             default:
-                $this->DefaultMessage();
+                $this->UserNotFound();
                 break;
         }
         return (string)view($this->view_template_path . $this->view_template_filename, $this->context);

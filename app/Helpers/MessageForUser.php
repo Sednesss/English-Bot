@@ -4,35 +4,48 @@ namespace App\Helpers;
 
 class MessageForUser
 {
-    private array $buttons = ['keyboard' => []];
-    private string $message = '';
+    private string $message;
+    private array $commands = [];
 
-    public function editButtons($new_buttons): void
+    public function addCommands($user_role_handler_list): void
     {
-        if (array_key_exists('keyboard', $new_buttons)) {
-            foreach ($new_buttons['keyboard'] as $button_line) {
-                if (!in_array($button_line, $this->buttons['keyboard'])) {
-                    $this->buttons['keyboard'][] = $button_line;
-                }
+        foreach ($user_role_handler_list as $user_role_handler) {
+            foreach ($user_role_handler->GetCommands() as $new_button) {
+                $this->commands[$new_button] = $new_button;
             }
         }
     }
 
-    public function editMessage($new_message): void
+    public function getButtons()
     {
-        if ($this->message == '' && $new_message != '') {
-            $this->message = $new_message;
+        $keyboard = [];
+        if (count($this->commands) > 0) {
+            $keyboard = [
+                'keyboard' => []
+            ];
+
+            foreach ($this->commands as $command) {
+                $keyboard['keyboard'][][] = ['text' => $command];
+            }
+        } else {
+            $keyboard = [
+                'remove_keyboard' => true
+            ];
         }
+
+
+        return $keyboard;
     }
 
-    public function getButtons(): array
-    {
-        return $this->buttons;
-    }
 
     public function getMessage(): string
     {
         return $this->message;
+    }
+
+    public function setMessage($new_message): void
+    {
+        $this->message = $new_message;
     }
 
 }

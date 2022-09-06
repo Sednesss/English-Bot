@@ -6,7 +6,9 @@ use App\Helpers\MessagesTemplates;
 
 interface RoleMessageInterface
 {
-    public function __construct(MessagesTemplates $messages_templates, string $incoming_message);
+    public function __construct(MessagesTemplates $messages_templates);
 
-    public function defineMessage();
+    public function getCommands();
+    public function isHandlerToIncomingMessage($incoming_message);
+    public function getMessage($incoming_message);
 }
