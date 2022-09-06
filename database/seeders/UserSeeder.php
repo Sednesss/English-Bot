@@ -42,6 +42,7 @@ class UserSeeder extends Seeder
             ]
         );
 
+
         $user_1->assignRole('administrator');
         $user_1->assignRole('teacher');
         $user_1->assignRole('assistant');

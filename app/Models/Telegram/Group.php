@@ -24,4 +24,13 @@ class Group extends Model
         return $this->hasMany(Lesson::class);
     }
 
+    public function nextLesson()
+    {
+        return $this->lessons()->orderByDesc('date')->orderByDesc('time')->first();
+    }
+
+    public function teachers()
+    {
+        return $this->users()->role('teacher')->get();
+    }
 }
