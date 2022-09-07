@@ -47,11 +47,21 @@ class User extends Authenticatable
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'group_users', 'group_id', 'user_id');
+        return $this->belongsToMany(Group::class, 'group_users', 'user_id', 'group_id');
     }
 
-    public function nextLesson()
-    {
-//        return $this->groups()...
-    }
+//    public function nextLesson()
+//    {
+//        $lessons = [];
+//        foreach ($this->groups() as $group) {
+//            $lessons[] = [
+//                $group->nextLesson->date,
+//                $group->nextLesson->time
+//            ];
+//        }
+//
+//
+//        $next_lesson = 0;
+//        return $next_lesson;
+//    }
 }

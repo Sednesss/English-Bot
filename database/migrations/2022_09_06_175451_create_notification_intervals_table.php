@@ -18,8 +18,7 @@ return new class extends Migration
 
             $table->string('name')->unique();
             $table->boolean('is_period');
-            $table->integer('period_min')->nullable();
-            $table->time('fixed_time')->nullable();
+            $table->time('time');
             $table->boolean('selected');
 
             $table->timestamps();

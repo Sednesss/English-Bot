@@ -12,8 +12,7 @@ class NotificationInterval extends Model
     protected $fillable = [
         'name',
         'is_period',
-        'period',
-        'fixed_time',
+        'time',
         'selected',
     ];
 }

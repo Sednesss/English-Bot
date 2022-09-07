@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Helpers\Telegram;
+use App\Models\Telegram\Group;
+use App\Models\Telegram\Lesson;
 use App\Models\Telegram\NotificationInterval;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -14,7 +16,7 @@ class NotifyUsersAboutTheLesson extends Command
      *
      * @var string
      */
-    protected $signature = 'telegram:notify';
+    protected $signature = 'telegram:notify {--before=} {--is_period=1}';
 
     /**
      * The console command description.
@@ -30,18 +32,32 @@ class NotifyUsersAboutTheLesson extends Command
      */
     public function handle()
     {
-        $all_users = User::all();
-//        $notification_interval = NotificationInterval::where('selected', 1)->first()->time;
+        $before = $this->option("before");
+        $isPeriod = $this->option("is_period");
 
-        foreach ($all_users as $user) {
+        echo $before;
+        echo $isPeriod;
 
-            $context = [
-                'user' => $user,
-            ];
+        date_default_timezone_set('Asia/Krasnoyarsk');
+        $nextLesson = Lesson::where('date', '>=', date('Y-m-d'))
+            ->where('time', '>=', date('H:i:s'))
+            ->orderBy('date')
+            ->orderBy('time')
+            ->first();
+
+        $group = $nextLesson->group;
+        $teachers = $group->teachers;
+
+        $context = [
+            'group' => $group,
+            'teachers' => $teachers,
+        ];
+
+        foreach ($group->users as $user) {
             $message = (string)view('Telegram/notify/NotifyUsersAboutTheLesson', $context);
             app(Telegram::class)->sendMessage($user->tg_user_id, $message, ['remove_keyboard' => true]);
-
         }
-        echo("\n   good");
+
+        echo("\ngood\n");
     }
 }

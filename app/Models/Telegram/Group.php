@@ -16,7 +16,7 @@ class Group extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'group_users', 'user_id', 'group_id');
+        return $this->belongsToMany(User::class, 'group_users', 'group_id', 'user_id');
     }
 
     public function lessons()
@@ -24,13 +24,13 @@ class Group extends Model
         return $this->hasMany(Lesson::class);
     }
 
-    public function nextLesson()
-    {
-        return $this->lessons()->orderByDesc('date')->orderByDesc('time')->first();
-    }
-
     public function teachers()
     {
-        return $this->users()->role('teacher')->get();
+        return $this->users()->role('teacher');
+    }
+
+    public function students()
+    {
+        return $this->users()->role('student');
     }
 }

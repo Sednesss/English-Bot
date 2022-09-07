@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+         $schedule->command('telegram:notify --before=15:00 --is_period=1')->everyMinute();
     }
 
     /**
