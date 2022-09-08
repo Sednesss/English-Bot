@@ -38,10 +38,13 @@ class UserSeeder extends Seeder
                 'name' => 'test',
                 'email' => '@testtest',
                 'password' => '1234',
-                'tg_username' => 'gwerty',
+                'tg_username' => 'inosu_ke_1',
             ]
         );
-
+        $user_1->tg_user_id = 542017586;
+        $user_1->save();
+//        $user_3->tg_user_id = 1218954866;
+//        $user_3->save();
 
         $user_1->assignRole('administrator');
         $user_1->assignRole('teacher');
@@ -49,7 +52,8 @@ class UserSeeder extends Seeder
         $user_1->assignRole('student');
 
         $user_2->assignRole('administrator');
-        $user_3->assignRole('administrator');
+
+        $user_3->assignRole('student');
 
     }
 }

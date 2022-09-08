@@ -58,6 +58,9 @@ class MessagesTemplates
             case '/default_message':
                 $this->DefaultMessage();
                 break;
+            case '/non-text_format':
+                $this->NonTextFormat();
+                break;
             default:
                 $this->UserNotFound();
                 break;
@@ -95,6 +98,7 @@ class MessagesTemplates
 
     private function EditTimetable(): void
     {
+
         $this->view_template_filename = 'TeacherAndAssistant/PushEditTimetableMessage';
     }
 
@@ -142,5 +146,9 @@ class MessagesTemplates
             'administrators' => $administrators,
         ];
 
+    }
+    private function NonTextFormat(): void
+    {
+        $this->view_template_filename = 'AllRole/SentInNonTextFormat';
     }
 }

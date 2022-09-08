@@ -13,6 +13,7 @@ use App\Services\Telegram\MessageAssistant;
 use App\Services\Telegram\MessageStudent;
 use App\Services\Telegram\MessageTeacher;
 use App\Services\Telegram\MessageWithoutRole;
+use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
@@ -24,28 +25,40 @@ class WebhookController extends Controller
     public function index(WebhookRequest $request)
     {
         $validated = $request->validated();
+        $message = $validated['message'];
+        $sender_id = $message['from']['id'];
+        $sender_username = $message['from']['username'];
+        if (array_key_exists('text', $message)) {
 
-        $sender_id = $validated['message']['from']['id'];
-        $sender_username = $validated['message']['from']['username'];
-        $incoming_message = $validated['message']['text'];
+            $incoming_message = $message['text'];
 
-        $this->message_for_user = new MessageForUser();
+            $this->message_for_user = new MessageForUser();
 
-        $this->defineUserHandlerToRoles($sender_id, $sender_username);
+            $this->defineUserHandlerToRoles($sender_id, $sender_username);
 
-        $this->message_for_user->addCommands($this->user_role_handler_list);
+            $this->message_for_user->addCommands($this->user_role_handler_list);
 
-        foreach ($this->user_role_handler_list as $user_role_handler) {
+            foreach ($this->user_role_handler_list as $user_role_handler) {
 
-            if ($user_role_handler->isHandlerToIncomingMessage($incoming_message)) {
-                $this->is_message_default = false;
-                $this->message_for_user->setMessage($user_role_handler->getMessage($incoming_message));
-                break;
+                if ($user_role_handler->isHandlerToIncomingMessage($incoming_message)) {
+                    $this->is_message_default = false;
+                    $this->message_for_user->setMessage($user_role_handler->getMessage($incoming_message));
+                    break;
+                }
             }
+
+            $this->isMessageDefault();
+
+        } else {
+            //keys: sticker, document, photo, video
+            $this->message_templates = new MessagesTemplates(Null);
+            $this->message_for_user = new MessageForUser();
+
+            if ($this->is_message_default) {
+                $this->message_for_user->setMessage($this->message_templates->GetResponseMessage('/non-text_format'));
+            }
+
         }
-
-        $this->isMessageDefault();
-
         app(Telegram::class)->sendMessage($sender_id, $this->message_for_user->getMessage(),
             $this->message_for_user->getButtons());
     }

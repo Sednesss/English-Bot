@@ -27,13 +27,18 @@ class GroupSeeder extends Seeder
         ]);
 
         GroupUser::create([
+            'user_id' => 1,
+            'group_id' => 2,
+        ]);
+
+        GroupUser::create([
             'user_id' => 2,
             'group_id' => 1,
         ]);
 
         GroupUser::create([
             'user_id' => 3,
-            'group_id' => 1,
+            'group_id' => 2,
         ]);
     }
 }

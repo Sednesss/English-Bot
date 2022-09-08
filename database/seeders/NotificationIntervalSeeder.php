@@ -18,21 +18,21 @@ class NotificationIntervalSeeder extends Seeder
         NotificationInterval::create([
             'name' => '15 минут',
             'is_period' => true,
-            'time' => '00:15',
+            'time' => '00:15:00',
             'selected' => true,
         ]);
 
         NotificationInterval::create([
             'name' => '1 час',
             'is_period' => true,
-            'time' => '01:00',
-            'selected' => false,
+            'time' => '01:00:00',
+            'selected' => true,
         ]);
 
         NotificationInterval::create([
             'name' => '10:00',
             'is_period' => false,
-            'time' => '10:00',
+            'time' => '10:00:00',
             'selected' => false,
         ]);
     }

@@ -24,7 +24,7 @@ class WebhookRequest extends FormRequest
     public function rules()
     {
         return [
-            //'message.from.id' => ['required', 'integer', 'exists:users,tg_username'],
+            //'message.from.username' => ['required', 'integer', 'exists:users,tg_username'],
             'message' => ['required', 'array'],
         ];
     }
